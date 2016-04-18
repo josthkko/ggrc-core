@@ -163,6 +163,24 @@
            _.contains(createContexts, targetContext));
       }
       return canMap;
+    },
+    get_last_index: function (taskList) {
+      var maxInt = Number.MAX_SAFE_INTEGER.toString(10);
+      var listMax = "0";
+      can.each(taskList, function (item) {
+        if (item.reify) {
+          item = item.reify();
+        }
+        var idx = item.attr
+          ? (item.attr("sort_index") || item.attr("instance.sort_index"))
+          : item.sort_index || item.instance && (item.instance.attr
+          ? item.instance.attr("sort_index")
+          : item.instance.sort_index);
+        if (typeof idx !== "undefined") {
+          listMax = _.max([idx, listMax]);
+        }
+      });
+      return GGRC.Math.string_half(GGRC.Math.string_add(listMax, maxInt));
     }
   };
 })(jQuery, window.GGRC = window.GGRC || {}, window.moment, window.Permission);

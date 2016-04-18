@@ -148,22 +148,30 @@
       });
     }
   }, {
-    init : function() {
+    init: function () {
       this._super && this._super.apply(this, arguments);
       this.bind('task_group', function (ev, newTask) {
+        var afterLastIndex;
+        var task;
+        var taskGroup;
+        var taskGroupTasks;
+
         if (!newTask) {
           return;
         }
         newTask = newTask.reify();
-        var task,
-            taskGroup = newTask.get_mapping('task_group_tasks').slice(0);
-
+        taskGroup = newTask.get_mapping('task_group_tasks').slice(0);
+        taskGroupTasks = newTask.get_mapping('task_group_tasks');
+        // find last created task
         do {
           task = taskGroup.splice(-1)[0];
           task = task && task.instance;
         } while (task === this);
 
+        // if there was no task found populate dates with default values
+        // and set the sort_index to a start value
         if (!task) {
+          this.attr('sort_index', GGRC.Utils.get_last_index());
           return;
         }
         can.each('relative_start_day relative_start_month relative_end_day relative_end_month start_date end_date'.split(' '),
@@ -171,7 +179,10 @@
             if (task[prop] && !this[prop]) {
               this.attr(prop, task.attr(prop) instanceof Date ? new Date(task[prop]) : task[prop]);
             }
-        }, this);
+          }, this);
+        // populate sort_index
+        afterLastIndex = GGRC.Utils.get_last_index(taskGroupTasks);
+        this.attr('sort_index', afterLastIndex);
       });
     },
 

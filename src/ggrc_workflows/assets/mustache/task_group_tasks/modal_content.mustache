@@ -250,7 +250,9 @@
     </div>
     <input type="hidden" name="task_group" model="TaskGroup" value="{{firstnonempty object_params.task_group instance.task_group.id}}" />
     <input type="hidden" name="context" model="Context" value="{{firstnonempty object_params.context instance.context.id}}" />
-    <input type="hidden" name="sort_index" value="{{firstnonempty object_params.sort_index instance.sort_index}}" />
+    <!-- we use this instead of type="hidden" because otherwise canjs will not populate the value using
+    instance.attr('sort_index', 666) -->
+    <input type="text" style="display:none" name="sort_index" value="{{instance.sort_index}}" />
   </div>
   <div class="row-fluid">
     <div data-id="code_hidden" class="span4 hidable">

@@ -19,28 +19,9 @@
 
    @param list a list of objects or bindings
    */
-  Mustache.registerHelper("sort_index_at_end", function(list, options) {
-    var max_int = Number.MAX_SAFE_INTEGER.toString(10);
-    var list_max = "0";
-
-    list = Mustache.resolve(list);
-    can.each(list, function(item) {
-      if (item.reify) {
-        item = item.reify();
-      }
-      var idx = item.attr
-        ? (item.attr("sort_index") || item.attr("instance.sort_index"))
-        : item.sort_index || item.instance && (item.instance.attr
-        ? item.instance.attr("sort_index")
-        : item.instance.sort_index);
-      if (typeof idx !== "undefined") {
-        list_max = GGRC.Math.string_max(idx, list_max);
-      }
-    });
-
-    return GGRC.Math.string_half(GGRC.Math.string_add(list_max, max_int));
+  Mustache.registerHelper("sort_index_at_end", function (list, options) {
+    return GGRC.Utils.get_last_index(list);
   });
-
 
   /*
    sortable_if mustache helper
