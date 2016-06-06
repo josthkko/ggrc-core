@@ -9,6 +9,7 @@ dashboard-js-files:
   - models/helpers.js
   - workflow_mustache_helpers.js
   - controllers/approval_workflow_controller.js
+  - modal_wrappers/relative_to_absolute_date.js
 
 dashboard-js-spec-files:
 

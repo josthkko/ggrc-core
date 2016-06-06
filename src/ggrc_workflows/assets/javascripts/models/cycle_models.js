@@ -448,7 +448,14 @@
         form.attr("end_date", moment().add({month: 3}).toDate());
 
         form.attr('isNewObject', true);
+        form.attr('relative_start_month', 1);
+        form.attr('relative_start_day', 1);
+        form.attr('relative_end_month', 1);
+        form.attr('relative_end_day', 1);
         form.attr('make_recurring', true);
+        // when creating a new task we should be able to choose any workflow
+        // to put the task there
+        form.attr('allow_all_frequencies', true);
 
         if (!form.contact) {
           form.attr("contact", {id: GGRC.current_user.id, type: "Person"});

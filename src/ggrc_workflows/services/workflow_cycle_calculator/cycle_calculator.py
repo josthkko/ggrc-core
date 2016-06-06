@@ -177,6 +177,21 @@ class CycleCalculator(object):
     start_date, end_date = self.non_adjusted_task_date_range(task, base_date)
     return self.adjust_date(start_date), self.adjust_date(end_date)
 
+  def date_range_from_relative(self, event, base_date=None):
+    """Returns the absolute date range from relative
+    Args:
+      event: dict containing relative_start_day, relative_start_month
+             relative_end_day, relative_end_month
+      base_date: Date based on which we convert from relative day to
+                 real date.
+    Returns:
+      tuple({datetime.date, datetime.date}): Weekend and holiday
+        adjusted start and end date.
+
+    """
+    start_date, end_date = self.non_adjusted_task_date_range(task, base_date)
+    return self.adjust_date(start_date), self.adjust_date(end_date)
+
   def non_adjusted_task_date_range(self, task, base_date=None, initialisation=False):
     """Calculates individual task's start and end date based on base_date.
 

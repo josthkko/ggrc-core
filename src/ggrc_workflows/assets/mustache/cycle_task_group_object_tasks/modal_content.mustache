@@ -54,7 +54,7 @@
             name="workflow."
             model="Workflow"
             data-lookup="Workflow"
-            data-params="Workflow:status=Active,frequency={{workflow.frequency}}"
+            data-params="Workflow:status=Active{{^if instance.allow_all_frequencies}},frequency={{workflow.frequency}}{{/if}}"
             data-lookup-cb="set_properties_from_workflow"
             placeholder="Select a Workflow"
             type="text"
@@ -115,8 +115,14 @@
         </div>
       </ggrc-modal-connector>
     </div>
+
     <div class="span4" id="frequency-div">
       <div class="row-fluid">
+      {{#using workflow=instance.workflow}}
+      {{#if_helpers "\
+        #if_equals" workflow.frequency "one_time" "\
+        or ^if" instance.make_recurring "\
+        or ^if" instance.isNewObject}}
         <div class="span5 {{#instance.computed_errors.start_date}}field-failure{{/instance.computed_errors.start_date}}">
           <h6>Start Date <span class="required">*</span></h6>
           <div class="input-group">
@@ -135,19 +141,175 @@
             {{#instance.computed_errors.end_date}}<label class="help-inline warning">{{this}}</label>{{/instance.computed_errors.end_date}}
           </div>
         </div>
+      {{else}}
+        {{#switch workflow.frequency}}
+        {{#case "weekly"}}
+        <relative-to-absolute-date instance="instance">
+          <label>
+            <h6>
+              Frequency: Weekly
+              <i class="fa fa-question-circle" rel="tooltip" title="Choose start/end days of the week"></i>
+            </h6>
+          </label>
+          <label class="smaller">
+            <h6 class="start-text">
+              Starts every
+              <span class="required">*</span>
+            </h6>
+            <select can-value="instance.relative_start_day" class="input-medium" tabindex="4" can-change="populateAbsoluteDate">
+              {{#iterate 1 "Monday" 2 "Tuesday" 3 "Wednesday" 4 "Thursday" 5 "Friday" step=2 listen=instance.relative_start_day}}
+              <option value="{{iterator_0}}" {{#if_equals instance.relative_start_day iterator_0}}selected="true"{{/if_equals}}>{{iterator_1}}</option>
+              {{/iterate}}
+            </select>
+            <h6>first occurence: {{#date instance.start_date true}}{{/date}}</h6>
+          </label>
+          <label class="smaller">
+            <h6 class="start-text">
+              Due every
+              <span class="required">*</span>
+            </h6>
+            <select can-value="instance.relative_end_day" class="input-medium" tabindex="5" can-change="populateAbsoluteDate">
+              {{#iterate 1 "Monday" 2 "Tuesday" 3 "Wednesday" 4 "Thursday" 5 "Friday" step=2 listen=instance.relative_end_day}}
+              <option value="{{iterator_0}}" {{#if_equals instance.relative_end_day iterator_0}}selected="true"{{/if_equals}}>{{iterator_1}}</option>
+              {{/iterate}}
+            </select>
+            <h6>first occurence: {{#date instance.end_date true}}{{/date}}</h6>
+          </label>
+        </relative-to-absolute-date>
+        {{/case}}
+        {{#case "monthly"}}
+        <relative-to-absolute-date instance="instance">
+          <label>
+            <h6>
+              Frequency: Each month
+              <i class="fa fa-question-circle" rel="tooltip" title="If date is Saturday, Sunday or holiday, Start/End date will be triggered on the first upcoming business day"></i>
+            </h6>
+          </label>
+          <label class="smaller">
+            <h6 class="start-text">
+              Starts every
+              <span class="required">*</span>
+            </h6>
+            <select can-value="instance.relative_start_day" class="input-small" tabindex="4" can-change="populateAbsoluteDate">
+              {{#iterate 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20 21 22 23 24 25 26 27 28 29 30 31 listen=instance.relative_start_day}}
+              <option {{#if_equals instance.relative_start_day iterator}}selected="selected"{{/if_equals}}>{{iterator}}</option>
+              {{/iterate}}
+            </select>
+            <h6>first occurence: {{#date instance.start_date true}}{{/date}}</h6>
+          </label>
+          <label class="smaller">
+            <h6 class="start-text">
+              Due every
+              <span class="required">*</span>
+            </h6>
+            <select can-value="instance.relative_end_day" class="input-small" tabindex="5" can-change="populateAbsoluteDate">
+              {{#iterate 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20 21 22 23 24 25 26 27 28 29 30 31 listen=instance.relative_end_day}}
+              <option {{#if_equals instance.relative_end_day iterator}}selected="selected"{{/if_equals}}>{{iterator}}</option>
+              {{/iterate}}
+            </select>
+            <h6>first occurence: {{#date instance.end_date true}}{{/date}}</h6>
+          </label>
+        </relative-to-absolute-date>
+        {{/case}}
+        {{#case "quarterly"}}
+        <relative-to-absolute-date instance="instance">
+          <label>
+            <h6>
+              Frequency: Every quarter
+              <i class="fa fa-question-circle" rel="tooltip" title="If date is Saturday, Sunday or holiday, Start/End date will be triggered on the first upcoming business day"></i>
+            </h6>
+          </label>
+          <label class="smaller">
+            <h6 class="start-text extrasmall">
+              Starts
+              <span class="required">*</span>
+            </h6>
+            <select can-value="instance.relative_start_month" class="input-medium" tabindex="4" can-change="populateAbsoluteDate">
+              {{#iterate 1 "Jan, Apr, Jul, Oct" 2 "Feb, May, Aug, Nov" 3 "Mar, Jun, Sep, Dec" step=2 listen=instance.relative_start_month}}
+              <option value="{{iterator_0}}" {{#if_equals instance.relative_start_month iterator_0}}selected="selected"{{/if_equals}}>{{iterator_1}}</option>
+              {{/iterator}}
+            </select>
+            <select can-value="instance.relative_start_day" class="input-mini" tabindex="5" can-change="populateAbsoluteDate">
+              {{#iterate 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20 21 22 23 24 25 26 27 28 29 30 31 listen=instance.relative_start_day}}
+              <option {{#if_equals instance.relative_start_day iterator}}selected="selected"{{/if_equals}}>{{iterator}}</option>
+              {{/iterate}}
+            </select>
+            <h6>first occurence: {{#date instance.start_date true}}{{/date}}</h6>
+          </label>
+          <label class="smaller">
+            <h6 class="start-text extrasmall">
+              Due
+              <span class="required">*</span>
+            </h6>
+            <select can-value="instance.relative_end_month" class="input-medium" tabindex="6" can-change="populateAbsoluteDate">
+              {{#iterate 1 "Jan, Apr, Jul, Oct" 2 "Feb, May, Aug, Nov" 3 "Mar, Jun, Sep, Dec" step=2 listen=instance.relative_end_month}}
+              <option value="{{iterator_0}}" {{#if_equals instance.relative_end_month iterator_0}}selected="selected"{{/if_equals}}>{{iterator_1}}</option>
+              {{/iterate}}
+            </select>
+            <select can-value="instance.relative_end_day" class="input-mini" tabindex="7" can-change="populateAbsoluteDate">
+              {{#iterate 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20 21 22 23 24 25 26 27 28 29 30 31 listen=instance.relative_end_day}}
+              <option {{#if_equals instance.relative_end_day iterator}}selected="selected"{{/if_equals}}>{{iterator}}</option>
+              {{/iterate}}
+            </select>
+            <h6>first occurence: {{#date instance.end_date true}}{{/date}}</h6>
+          </label>
+        </relative-to-absolute-date>
+        {{/case}}
+        {{#case "annually"}}
+        <relative-to-absolute-date instance="instance">
+          <label>
+            <h6>
+              Frequency: Each year
+              <i class="fa fa-question-circle" rel="tooltip" title="If date is Saturday, Sunday or holiday, Start/End date will be triggered on the first upcoming business day"></i>
+            </h6>
+          </label>
+          <label class="smaller">
+            <h6 class="start-text">
+              Starts every
+              <span class="required">*</span>
+            </h6>
+            <select can-value="instance.relative_start_month" class="input-small" tabindex="4" can-change="populateAbsoluteDate">
+              {{#iterate 1 "January" 2 "February" 3 "March" 4 "April" 5 "May" 6 "June" 7 "July" 8 "August" 9 "September" 10 "October" 11 "November" 12 "December" step=2 listen=instance.relative_start_month}}
+                <option value="{{iterator_0}}" {{#if_equals iterator_0 instance.relative_start_month}}selected="selected"{{/if_equals}}>{{iterator_1}}</option>
+              {{/iterate}}
+            </select>
+            <select can-value="instance.relative_start_day" class="input-mini" tabindex="5" can-change="populateAbsoluteDate" value="{{firstnonempty instance.relative_start_day '1'}}">
+              {{#iterate 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20 21 22 23 24 25 26 27 28 29 30 31 listen=instance.relative_start_day}}
+              <option {{#if_equals instance.relative_start_day iterator}}selected="selected"{{/if_equals}}>{{iterator}}</option>
+              {{/iterate}}
+            </select>
+            <h6>first occurence: {{#date instance.start_date true}}{{/date}}</h6>
+          </label>
+          <label class="smaller">
+            <h6 class="start-text">
+              Due every
+              <span class="required">*</span>
+            </h6>
+            <select can-value="instance.relative_end_month" class="input-small" tabindex="6" can-change="populateAbsoluteDate">
+              {{#iterate 1 "January" 2 "February" 3 "March" 4 "April" 5 "May" 6 "June" 7 "July" 8 "August" 9 "September" 10 "October" 11 "November" 12 "December" step=2 listen=instance.relative_end_month}}
+                <option value="{{iterator_0}}" {{#if_equals iterator_0 instance.relative_end_month}}selected="selected"{{/if_equals}}>{{iterator_1}}</option>
+              {{/iterate}}
+            </select>
+            <select can-value="instance.relative_end_day" class="input-mini" tabindex="7" can-change="populateAbsoluteDate">
+              {{#iterate 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20 21 22 23 24 25 26 27 28 29 30 31 listen=instance.relative_end_day}}
+              <option {{#if_equals instance.relative_end_day iterator}}selected="selected"{{/if_equals}}>{{iterator}}</option>
+              {{/iterate}}
+            </select>
+            <h6>first occurence: {{#date instance.end_date true}}{{/date}}</h6>
+          </label>
+        </relative-to-absolute-date>
+        {{/case}}
+        {{/switch}}
+      {{/if_equals}}
+      {{/using}}
       </div>
     </div>
   </div>
-  <div class="row-fluid">
-    <div class="span8">
-      <br>
-    </div>
 
-    <input type="hidden" name="task_group" model="TaskGroup" value="{{firstnonempty object_params.task_group instance.task_group.id}}" />
-    <input type="hidden" name="cycle_task_group" model="CycleTaskGroup" value="{{firstnonempty object_params.task_group instance.task_group.id}}" data-populated-in-callback />
-    <input type="hidden" name="sort_index" value="{{firstnonempty object_params.sort_index instance.sort_index}}" />
-    <input type="hidden" name="cycle" model="Cycle" value="{{instance.cycle.id}}" data-populated-in-callback />
-    <input type="hidden" name="context" model="Context" value="{{firstnonempty object_params.context instance.context.id}}" data-populated-in-callback />
-    <input type="hidden" name="status" value="{{firstnonempty instance.status 'Assigned'}}" />
-  </div>
+  <input type="hidden" name="task_group" model="TaskGroup" value="{{firstnonempty object_params.task_group instance.task_group.id}}" />
+  <input type="hidden" name="cycle_task_group" model="CycleTaskGroup" value="{{firstnonempty object_params.task_group instance.task_group.id}}" data-populated-in-callback />
+  <input type="hidden" name="sort_index" value="{{firstnonempty object_params.sort_index instance.sort_index}}" />
+  <input type="hidden" name="cycle" model="Cycle" value="{{instance.cycle.id}}" data-populated-in-callback />
+  <input type="hidden" name="context" model="Context" value="{{firstnonempty object_params.context instance.context.id}}" data-populated-in-callback />
+  <input type="hidden" name="status" value="{{firstnonempty instance.status 'Assigned'}}" />
 </form>
