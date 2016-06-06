@@ -1024,6 +1024,8 @@ can.Component.extend({
     init: function() {
       var that = this,
           key;
+      // cast deferred to Bool, we get it from the template as a string
+      this.scope.attr('deferred', (this.scope.attr('deferred') === 'true'));
 
       this.scope.attr("controller", this);
       if (!this.scope.instance) {

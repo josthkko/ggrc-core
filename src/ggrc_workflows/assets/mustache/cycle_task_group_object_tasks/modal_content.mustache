@@ -54,7 +54,7 @@
             name="workflow."
             model="Workflow"
             data-lookup="Workflow"
-            data-params="Workflow:status=Active,frequency=one_time"
+            data-params="Workflow:status=Active,frequency={{workflow.frequency}}"
             data-lookup-cb="set_properties_from_workflow"
             placeholder="Select a Workflow"
             type="text"
@@ -74,7 +74,7 @@
           instance="instance"
           source_mapping="info_related_objects"
           default_mappings="object_params.pre_mapped_objects"
-          deferred="true"
+          deferred="false"
           >
         <h6>Object(s) mapped to task</h6>
         {{#prune_context}}

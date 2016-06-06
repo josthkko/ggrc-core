@@ -35,6 +35,7 @@
             <a tabindex="25" class="btn btn-small btn-success preventdoubleclick {{disable_if_errors instance}}" data-toggle="modal-submit" href="javascript://">Save &amp; Close</a>
           {{/new_object_form}}
           {{#new_object_form}}
+            {{{render_hooks 'CycleTaskGroupObjectTask.modal_buttons'}}}
             <a tabindex="24" class="btn btn-small btn-info preventdoubleclick {{disable_if_errors instance}}" data-toggle="modal-submit-addmore" href="javascript://">Save & Add Another</a>
             <a tabindex="25" class="btn btn-small btn-success preventdoubleclick {{disable_if_errors instance}}" data-toggle="modal-submit" href="javascript://">Save & Close</a>
           {{/new_object_form}}

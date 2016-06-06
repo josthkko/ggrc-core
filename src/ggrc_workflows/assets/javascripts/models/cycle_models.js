@@ -368,6 +368,74 @@
       }
       populateFromWorkflow(this, workflow);
     },
+    before_save: function () {
+      // just save the pending joins before we resolve them so we can copy
+      // them over to the template task
+      this.stored_pending_joins = this._pending_joins;
+    },
+    after_create: function () {
+      var cycleTask = this;
+
+      // create a template task if we selected the checkbox
+      if (this.make_recurring === true) {
+        this.get_binding('cycle_task_group').refresh_instances()
+          .then(function (CycleTaskGroup) {
+            var task;
+            var taskGroup = CycleTaskGroup[0].instance.task_group;
+            var taskData = {
+              _pending_joins: cycleTask.stored_pending_joins,
+              contact: cycleTask.contact,
+              context: cycleTask.context,
+              description: cycleTask.description,
+              end_date: cycleTask.end_date,
+              sort_index: "0",
+              start_date: cycleTask.start_date,
+              task_group: taskGroup,
+              task_type: cycleTask.task_type,
+              title: cycleTask.title,
+              workflow: cycleTask.workflow,
+              relative_start_day: cycleTask.relative_start_day,
+              relative_start_month: cycleTask.relative_start_month,
+              relative_end_day: cycleTask.relative_end_day,
+              relative_end_month: cycleTask.relative_end_month
+            };
+
+            if (taskData.task_type !== 'text') {
+              taskData.response_options = cycleTask.response_options;
+            }
+            task = new CMS.Models.TaskGroupTask(taskData);
+            task.save().then(function (newTask) {
+              // Connect the new task and cycle task
+              cycleTask.attr('task_group_task', {
+                id: newTask.id,
+                type: 'TaskGroupTask'});
+              cycleTask.save();
+            });
+          });
+      }
+    },
+    after_update: function () {
+      var taskGroupId;
+      var cycleTask = this;
+      // If there is a task associated with this cycle task, move it to the
+      // other workflow as well
+      if (this.task_group_task !== null &&
+          !_.isUndefined(this.task_group_task.id)) {
+        CMS.Models.TaskGroupTask
+          .findOne({id: cycleTask.task_group_task.id})
+          .then(function (task) {
+            cycleTask.get_binding('cycle_task_group').refresh_instances()
+              .then(function (cycleTaskGroup) {
+                taskGroupId = cycleTaskGroup[0].instance.task_group.id;
+                task.attr('task_group', {
+                  id: taskGroupId,
+                  type: 'TaskGroup'
+                });
+                task.save();
+              });
+          });
+      }
+    },
     form_preload: function (newObjectForm) {
       var form = this;
       var workflows;
@@ -376,8 +444,11 @@
 
       if (newObjectForm) {
         // prepopulate dates with default ones
-        this.attr("start_date", new Date());
-        this.attr("end_date", moment().add({month: 3}).toDate());
+        form.attr("start_date", new Date());
+        form.attr("end_date", moment().add({month: 3}).toDate());
+
+        form.attr('isNewObject', true);
+        form.attr('make_recurring', true);
 
         if (!form.contact) {
           form.attr("contact", {id: GGRC.current_user.id, type: "Person"});

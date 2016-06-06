@@ -80,6 +80,7 @@
     root_object: "task_group_task",
     root_collection: "task_group_tasks",
     findAll: "GET /api/task_group_tasks",
+    findOne: "GET /api/task_group_tasks/{id}",
     create: "POST /api/task_group_tasks",
     update: "PUT /api/task_group_tasks/{id}",
     destroy: "DELETE /api/task_group_tasks/{id}",

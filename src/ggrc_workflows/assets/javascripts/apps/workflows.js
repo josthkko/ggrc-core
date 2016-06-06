@@ -577,6 +577,11 @@
   GGRC.register_hook(
       'Dashboard.Errors', GGRC.mustache_path + '/dashboard/info/errors');
 
+  GGRC.register_hook(
+    "CycleTaskGroupObjectTask.modal_buttons",
+    GGRC.mustache_path + "/cycle_task_group_object_tasks/create_recurring_hook.mustache"
+    );
+
   WorkflowExtension.init_mappings();
 
   var draft_on_update_mixin = can.Model.Mixin({

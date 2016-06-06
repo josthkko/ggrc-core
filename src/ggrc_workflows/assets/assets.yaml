@@ -36,6 +36,7 @@ dashboard-js-template-files:
   - cycle_task_group_object_tasks/tree_footer.mustache
   - cycle_task_group_object_tasks/tree_add_item.mustache
   - cycle_task_group_object_tasks/tree_header.mustache
+  - cycle_task_group_object_tasks/create_recurring_hook.mustache
   - dashboard/lhn_workflows.mustache
   - dashboard/widgets.mustache
   - dashboard/object_nav_actions.mustache

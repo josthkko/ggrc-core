@@ -1,0 +1,18 @@
+{{!
+    Copyright (C) 2016 Google Inc., authors, and contributors <see AUTHORS file>
+    Licensed under http://www.apache.org/licenses/LICENSE-2.0 <see LICENSE file>
+    Created By: jost@reciprocitylabs.com
+    Maintained By: jost@reciprocitylabs.com
+}}
+
+{{#if_equals instance.class.shortName 'CycleTaskGroupObjectTask'}}
+  {{#using workflow=instance.workflow}}
+    {{^if_equals workflow.frequency "one_time"}}
+      <label class="inline">
+        <input type="checkbox" can-value="instance.make_recurring">
+        Repeat this task each sprint
+        <i class="fa fa-question-circle" rel="tooltip" title="Add task to sprint template"></i>
+      </label>
+    {{/if_equals}}
+  {{/using}}
+{{/if_equals}}
