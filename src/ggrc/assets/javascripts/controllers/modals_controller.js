@@ -1021,9 +1021,11 @@ can.Component.extend({
     changes: []
   },
   events: {
-    init: function() {
-      var that = this,
-          key;
+    init: function () {
+      var that = this;
+      var key;
+      var model;
+      var object_to_add;
       // cast deferred to Bool, we get it from the template as a string
       this.scope.attr('deferred', (this.scope.attr('deferred') === 'true'));
 
@@ -1036,8 +1038,8 @@ can.Component.extend({
 
       this.scope.default_mappings.forEach(function (default_mapping) {
         if (default_mapping.id && default_mapping.type) {
-          var model = CMS.Models[default_mapping.type];
-          var object_to_add = model.findInCacheById(default_mapping.id);
+          model = CMS.Models[default_mapping.type];
+          object_to_add = model.findInCacheById(default_mapping.id);
           that.scope.instance.mark_for_addition("related_objects_as_source", object_to_add, {});
           that.scope.list.push(object_to_add);
         }
@@ -1086,8 +1088,8 @@ can.Component.extend({
       }
     },
     deferred_update: function () {
-      var changes = this.scope.changes,
-          instance = this.scope.instance;
+      var changes = this.scope.changes;
+      var instance = this.scope.instance;
 
       if (!changes.length) {
         if (instance && instance._pending_joins && instance._pending_joins.length) {
