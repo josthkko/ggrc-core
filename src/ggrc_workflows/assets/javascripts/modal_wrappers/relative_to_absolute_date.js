@@ -14,6 +14,9 @@
     scope: {
       instance: null,
       populateAbsoluteDate: function (scope, el, ev, val, oldVal) {
+        scope.instance.attr('start_date', undefined);
+        scope.instance.attr('end_date', undefined);
+
         $.getJSON("/workflows/calculate_absolute_dates", {
           workflow_id: scope.instance.workflow.id,
           relative_start_day: scope.instance.relative_start_day,
